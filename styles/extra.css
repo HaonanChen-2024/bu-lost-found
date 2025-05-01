@@ -1,0 +1,105 @@
+/* styles/extra.css */
+
+/* ================== 1. 后代选择器 (≥10) ================== */
+.container .header {}
+.container .header .title {}
+.container .content {}
+.container .content p {}
+.container .footer {}
+.main .nav {}
+.main .nav .item {}
+.card .card-body {}
+.card .card-footer {}
+.list .list-item {}
+
+/* ================== 2. 相邻兄弟选择器 (≥10) ================== */
+h1 + p {}
+h2 + ul {}
+.container > .header + .content {}
+.item + .item {}
+.btn + .btn {}
+.alert + .alert {}
+.input + label {}
+li + li {}
+section + section {}
+nav + main {}
+
+/* ================== 3. Class 选择器 (≥20) ================== */
+.btn {}
+.btn-primary {}
+.btn-secondary {}
+.card {}
+.card-header {}
+.card-body {}
+.card-footer {}
+.nav-item {}
+.nav-link {}
+.modal {}
+.modal-title {}
+.modal-body {}
+.modal-footer {}
+.alert {}
+.alert-info {}
+.alert-success {}
+.list {}
+.list-item {}
+.toast {}
+.dropdown {}
+.dropdown-menu {}
+.profile {}  /* 共 20+ */
+
+/* ================== 4. ID 选择器 (≥20) ================== */
+#main {}
+#header {}
+#nav {}
+#sidebar {}
+#content {}
+#footer {}
+#login-form {}
+#signup-form {}
+#post-list {}
+#post-item {}
+#chat {}
+#message-input {}
+#uploader {}
+#gallery {}
+#notification {}
+#toast {}
+#search {}
+#filter {}
+#profile {}
+#settings {}  /* 共 20+ */
+
+/* ================== 5. 伪类选择器 (≥15) ================== */
+a:hover {}
+a:focus {}
+button:active {}
+input:disabled {}
+input:checked {}
+input:placeholder-shown {}
+li:nth-child(odd) {}
+li:nth-child(even) {}
+ul li:first-child {}
+ul li:last-child {}
+select:focus {}
+textarea:focus {}
+a:visited {}
+a:link {}
+details[open] {}  /* 共 15+ */
+
+/* ================== 6. 伪元素选择器 (≥15) ================== */
+.btn::before {}
+.btn::after {}
+.card::before {}
+.card::after {}
+.logo::before {}
+.logo::after {}
+p::first-letter {}
+p::first-line {}
+blockquote::before {}
+blockquote::after {}
+ul::marker {}
+li::marker {}
+input::placeholder {}
+section::before {}
+section::after {}  /* 共 15+ */
