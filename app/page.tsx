@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Post } from "@/lib/models/Post";
 import AppShell from "@/app/_components/AppShell";
+import AIAgentPanel from "@/app/_components/AIAgentPanel";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";   // 新增
 
@@ -167,6 +168,7 @@ export default function HomePage() {
 
   return (
     <AppShell>
+      <AIAgentPanel />
       {/* 过滤器 */}
       <div className="my-3 flex justify-around">
         {(["all", "lost", "found", "mine"] as const).map((f) => (
