@@ -233,18 +233,26 @@ export default function HomePage() {
               <p className="mt-1 line-clamp-2 text-sm text-gray-600">
                 {p.brief()}
               </p>
-              <button
-                onClick={() => handleChat(p)}
-                className="mt-2 inline-block rounded bg-blue-600 px-3 py-1 text-white"
-              >
-                Chat
-              </button>
-              <button
-                onClick={() => router.push(`/post/${p.id}/edit`)}
-                className="rounded bg-gray-200 px-3 py-1"
-              >
-                Edit
-              </button>
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={() => router.push(`/post/${p.id}`)}
+                  className="inline-block rounded bg-gray-100 px-3 py-1"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleChat(p)}
+                  className="inline-block rounded bg-blue-600 px-3 py-1 text-white"
+                >
+                  Chat
+                </button>
+                <button
+                  onClick={() => router.push(`/post/${p.id}/edit`)}
+                  className="rounded bg-gray-200 px-3 py-1"
+                >
+                  Edit
+                </button>
+              </div>
             </div>
           </article>
         ))

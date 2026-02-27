@@ -11,6 +11,7 @@ create or replace function public.match_found_posts(
 )
 returns table (
   id uuid,
+  user_id uuid,
   title text,
   description text,
   location text,
@@ -22,6 +23,7 @@ stable
 as $$
   select
     p.id,
+    p.user_id,
     p.title,
     p.description,
     p.location,

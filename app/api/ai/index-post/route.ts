@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateEmbedding } from "@/lib/server/aiClient";
+import { checkRateLimit, getClientIp } from "@/lib/server/rateLimit";
 import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
 
 type IndexBody = {
@@ -8,6 +9,21 @@ type IndexBody = {
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const rate = checkRateLimit(`ai-index:${ip}`, 30, 60 * 1000);
+    if (!rate.ok) {
+      return NextResponse.json(
+        { error: "Too many requests. Please retry later." },
+        {
+          status: 429,
+          headers: {
+            "x-ratelimit-remaining": String(rate.remaining),
+            "x-ratelimit-reset": String(rate.resetAt),
+          },
+        }
+      );
+    }
+
     const supabaseAdmin = getSupabaseAdmin();
 
     const auth = req.headers.get("authorization");
@@ -60,7 +76,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: updateErr.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json(
+      { ok: true },
+      {
+        headers: {
+          "x-ratelimit-remaining": String(rate.remaining),
+          "x-ratelimit-reset": String(rate.resetAt),
+        },
+      }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

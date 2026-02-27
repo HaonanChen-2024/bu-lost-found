@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import {
-  buildMatchReply,
-  extractSearchIntent,
-  generateEmbedding,
-} from "@/lib/server/aiClient";
+import { buildMatchReply, extractSearchIntent, generateEmbedding } from "@/lib/server/aiClient";
+import { checkRateLimit, getClientIp } from "@/lib/server/rateLimit";
 import { getSupabaseAdmin } from "@/lib/server/supabaseAdmin";
 
 type AskBody = {
@@ -13,6 +10,7 @@ type AskBody = {
 
 type MatchRow = {
   id: string;
+  user_id: string;
   title: string;
   description: string;
   location: string;
@@ -22,8 +20,22 @@ type MatchRow = {
 
 export async function POST(req: Request) {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const ip = getClientIp(req);
+    const rate = checkRateLimit(`ai-assistant:${ip}`, 20, 60 * 1000);
+    if (!rate.ok) {
+      return NextResponse.json(
+        { error: "Too many requests. Please retry later." },
+        {
+          status: 429,
+          headers: {
+            "x-ratelimit-remaining": String(rate.remaining),
+            "x-ratelimit-reset": String(rate.resetAt),
+          },
+        }
+      );
+    }
 
+    const supabaseAdmin = getSupabaseAdmin();
     const body = (await req.json()) as AskBody;
     const query = body.query?.trim();
     if (!query) {
@@ -53,11 +65,19 @@ export async function POST(req: Request) {
       })),
     });
 
-    return NextResponse.json({
-      normalized,
-      reply,
-      matches,
-    });
+    return NextResponse.json(
+      {
+        normalized,
+        reply,
+        matches,
+      },
+      {
+        headers: {
+          "x-ratelimit-remaining": String(rate.remaining),
+          "x-ratelimit-reset": String(rate.resetAt),
+        },
+      }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
