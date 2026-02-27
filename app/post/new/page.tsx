@@ -80,15 +80,35 @@ export default function NewPostPage() {
       });
 
       // 5. 写库
-      const { error: dbErr } = await supabase
+      const { data: inserted, error: dbErr } = await supabase
         .from("posts")
-        .insert(post.toRow());
+        .insert(post.toRow())
+        .select("id,status")
+        .single();
       if (dbErr) throw dbErr;
+
+      if (inserted?.status === "found" && inserted.id) {
+        const { data: session } = await supabase.auth.getSession();
+        const token = session.session?.access_token;
+        if (token) {
+          const aiRes = await fetch("/api/ai/index-post", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ postId: inserted.id }),
+          });
+          if (!aiRes.ok) {
+            toast.error("发布成功，但 AI 索引失败，可稍后重试");
+          }
+        }
+      }
 
       toast.success("Posted!");
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Unknown error");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -127,7 +147,7 @@ export default function NewPostPage() {
           <select
             className="rounded border p-2"
             value={status}
-            onChange={e => setStatus(e.target.value as any)}
+            onChange={e => setStatus(e.target.value as "lost" | "found")}
           >
             <option value="lost">Lost</option>
             <option value="found">Found</option>
