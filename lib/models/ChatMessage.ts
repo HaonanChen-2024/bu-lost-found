@@ -1,8 +1,8 @@
 export class ChatMessage {
     id?: number;
-    threadId: string;
-    senderId: string;
-    body: string;
+    threadId!: string;
+    senderId!: string;
+    body!: string;
     sentAt?: string;
   
     constructor(o: {

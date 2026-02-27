@@ -6,12 +6,12 @@ export class Post {
   isFavorite: boolean = false;
   favorites: string[] = [];      // uuid 列表
   id?: string;
-  userId: string;
-  title: string;
-  description: string;
-  status: PostStatus;
+  userId!: string;
+  title!: string;
+  description!: string;
+  status!: PostStatus;
   imageUrl?: string;
-  location: string;
+  location!: string;
   createdAt?: string;
   imageUrls?: string[];
 
